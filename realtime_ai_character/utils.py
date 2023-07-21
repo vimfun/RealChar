@@ -1,5 +1,5 @@
 from dataclasses import field
-from typing import List
+from typing import Dict, List, Type
 
 from langchain.schema import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from pydantic.dataclasses import dataclass
@@ -27,7 +27,7 @@ class ConversationHistory:
 
 
 def build_history(conversation_history: ConversationHistory) -> List[BaseMessage]:
-    history = []
+    history: List[BaseMessage] = []
     for i, message in enumerate(conversation_history):
         if i == 0:
             history.append(SystemMessage(content=message))
@@ -39,7 +39,7 @@ def build_history(conversation_history: ConversationHistory) -> List[BaseMessage
 
 
 class Singleton:
-    _instances = {}
+    _instances: Dict[Type, object] = {}
 
     @classmethod
     def get_instance(cls, *args, **kwargs):
@@ -79,5 +79,5 @@ class ConnectionManager(Singleton):
                 await connection.send_text(message)
 
 
-def get_connection_manager():
+def get_connection_manager() -> ConnectionManager:
     return ConnectionManager.get_instance()
