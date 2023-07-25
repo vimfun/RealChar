@@ -2,23 +2,29 @@ import asyncio
 import os
 import uuid
 
-from fastapi import APIRouter, Depends, Path, WebSocket, WebSocketDisconnect, Query
+from fastapi import APIRouter, Depends, Path, Query, WebSocket, WebSocketDisconnect
 from requests import Session
 
-from realtime_ai_character.audio.speech_to_text import (SpeechToText,
-                                                        get_speech_to_text)
-from realtime_ai_character.audio.text_to_speech import (TextToSpeech,
-                                                        get_text_to_speech)
+from realtime_ai_character.audio.speech_to_text import SpeechToText, get_speech_to_text
+from realtime_ai_character.audio.text_to_speech import TextToSpeech, get_text_to_speech
 from realtime_ai_character.character_catalog.catalog_manager import (
-    CatalogManager, get_catalog_manager)
+    CatalogManager,
+    get_catalog_manager,
+)
 from realtime_ai_character.database.connection import get_db
-from realtime_ai_character.llm import (AsyncCallbackAudioHandler,
-                                       AsyncCallbackTextHandler, get_llm, LLM)
+from realtime_ai_character.llm import (
+    LLM,
+    AsyncCallbackAudioHandler,
+    AsyncCallbackTextHandler,
+    get_llm,
+)
 from realtime_ai_character.logger import get_logger
 from realtime_ai_character.models.interaction import Interaction
-from realtime_ai_character.utils import (ConversationHistory, build_history,
-                                         get_connection_manager)
-
+from realtime_ai_character.utils import (
+    ConversationHistory,
+    build_history,
+    get_connection_manager,
+)
 
 logger = get_logger(__name__)
 
@@ -37,9 +43,9 @@ async def websocket_endpoint(
         llm_model: str = Query(default=os.getenv(
             'LLM_MODEL_USE', 'gpt-3.5-turbo-16k')),
         db: Session = Depends(get_db),
-        catalog_manager=Depends(get_catalog_manager),
-        speech_to_text=Depends(get_speech_to_text),
-        text_to_speech=Depends(get_text_to_speech)):
+        catalog_manager: CatalogManager = Depends(get_catalog_manager),
+        speech_to_text: SpeechToText = Depends(get_speech_to_text),
+        text_to_speech: TextToSpeech = Depends(get_text_to_speech)):
     # basic authentication
     if os.getenv('USE_AUTH', '') and api_key != os.getenv('AUTH_API_KEY'):
         await websocket.close(code=1008, reason="Unauthorized")

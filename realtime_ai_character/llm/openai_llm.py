@@ -2,14 +2,20 @@ import os
 from typing import List
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+
 if os.getenv('OPENAI_API_TYPE') == 'azure':
     from langchain.chat_models import AzureChatOpenAI
 else:
     from langchain.chat_models import ChatOpenAI
+
 from langchain.schema import BaseMessage, HumanMessage
 
 from realtime_ai_character.database.chroma import get_chroma
-from realtime_ai_character.llm.base import AsyncCallbackAudioHandler, AsyncCallbackTextHandler, LLM
+from realtime_ai_character.llm.base import (
+    LLM,
+    AsyncCallbackAudioHandler,
+    AsyncCallbackTextHandler,
+)
 from realtime_ai_character.logger import get_logger
 from realtime_ai_character.utils import Character
 
@@ -50,7 +56,7 @@ class OpenaiLlm(LLM):
 
         # 3. Generate response
         response = await self.chat_open_ai.agenerate(
-            [history], callbacks=[callback, audioCallback, StreamingStdOutCallbackHandler()])
+            [history], callbacks=[c for c in [callback, audioCallback, StreamingStdOutCallbackHandler()] if c is not None])
         logger.info(f'Response: {response}')
         return response.generations[0][0].text
 

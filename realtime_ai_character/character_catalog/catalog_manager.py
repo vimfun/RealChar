@@ -1,12 +1,14 @@
 import os
-from dotenv import load_dotenv
-from pathlib import Path
 from contextlib import ExitStack
-from realtime_ai_character.logger import get_logger
-from realtime_ai_character.utils import Singleton, Character
-from realtime_ai_character.database.chroma import get_chroma
-from llama_index import SimpleDirectoryReader
+from pathlib import Path
+
+from dotenv import load_dotenv
 from langchain.text_splitter import CharacterTextSplitter
+from llama_index import SimpleDirectoryReader
+
+from realtime_ai_character.database.chroma import get_chroma
+from realtime_ai_character.logger import get_logger
+from realtime_ai_character.utils import Character, Singleton
 
 load_dotenv()
 logger = get_logger(__name__)
@@ -85,7 +87,7 @@ class CatalogManager(Singleton):
         self.db.add_documents(docs)
 
 
-def get_catalog_manager():
+def get_catalog_manager() -> CatalogManager:
     return CatalogManager.get_instance()
 
 
