@@ -1,0 +1,3 @@
+[submodule "RealChar"]
+	path = RealChar
+	url = git@github.com:Shaunwei/RealChar.git
