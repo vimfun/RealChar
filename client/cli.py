@@ -1,20 +1,19 @@
-import os
-import queue
 import asyncio
 import concurrent.futures
 import functools
 import io
-import sys
+import os
+import queue
 import random
-from threading import Thread
+import sys
 import time
-
-from dotenv import load_dotenv
+from threading import Thread
 
 import pyaudio
 import speech_recognition as sr
 import websockets
 from aioconsole import ainput  # for async input
+from dotenv import load_dotenv
 from pydub import AudioSegment
 from simpleaudio import WaveObject
 

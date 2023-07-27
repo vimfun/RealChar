@@ -23,7 +23,7 @@ app.mount("/static", StaticFiles(directory=os.path.join(
 
 
 # initializations
-CatalogManager.initialize(overwrite=True)
+CatalogManager.initialize(overwrite=False)
 ConnectionManager.initialize()
 get_text_to_speech()
 get_speech_to_text()

@@ -1,5 +1,7 @@
-from sqlalchemy import Column, Integer, String, DateTime, Unicode
 import datetime
+
+from sqlalchemy import Column, DateTime, Integer, String, Unicode
+
 from realtime_ai_character.database.base import Base
 
 
@@ -7,7 +9,6 @@ class Interaction(Base):
     __tablename__ = "interactions"
 
     id = Column(Integer, primary_key=True, index=True, nullable=False)
-    client_id = Column(Integer)  # deprecated, use user_id instead
     user_id = Column(String(50))
     session_id = Column(String(50))
     # deprecated, use client_message_unicode instead

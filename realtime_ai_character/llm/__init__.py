@@ -1,4 +1,13 @@
-from realtime_ai_character.llm.base import AsyncCallbackAudioHandler, AsyncCallbackTextHandler, LLM
+import os
+
+os.environ["http_proxy"] = 'http://127.0.0.1:7890'
+os.environ["https_proxy"] = 'http://127.0.0.1:7890'
+
+from realtime_ai_character.llm.base import (
+    LLM,
+    AsyncCallbackAudioHandler,
+    AsyncCallbackTextHandler,
+)
 
 
 def get_llm(model='gpt-3.5-turbo-16k') -> LLM:

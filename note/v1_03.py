@@ -70,10 +70,17 @@ class HiEngine:
         ebd = OpenAIEmbeddings()
         self.vdb = Chroma.from_documents(embedding=ebd, documents=split_docs, persist_directory="note/data/vdb")
 
+    def execute(self,
+                query,
+                pt='''检索内容：\n```\n{docs_strs}\n```\n\n请基于以上内容，分析问题: \n```\n{query}\n```''',
+               choice_pt='''下面的问题是一个选择题,请在返回的内容中不要给答案,不要要给具体的选项是什么,只是对选项做分析即可:\n```\n{query}\n```\n''',
+               default_pt='您回复对象是中国大学生，请耐心细致的回答下面这个问题:\n```\n{query}\n```',
+               similarity_threshold=0.85,
+               squential_chain_cfg=[]):
+
 def prepare_engine(chunk_size=700):
     docsearch = Simi(split_docs)
 
-    _filter = LLMChainFilter.from_llm(llm=OpenAI(temperature=0.0))
     __test_pt = PromptTemplate.from_template('''这是一个选择题吗？\n```\n{query}\n```\n 如果是，就返回True;如果不是，就返回 False. Please give the result as a boolean value( "True" or "False"):''')
     __llm=OpenAI(temperature=0.2)
     __llm=ChatOpenAI(model_name='gpt-3.5-turbo', temperature=0.6)
@@ -110,3 +117,12 @@ res = e.vdb.similarity_search_with_relevance_scores("根据project部分的要�
 print(res)
 
 
+# %%
+
+from langchain.chat_models import ChatOpenAI
+m = ChatOpenAI(
+                temperature=0.5,
+                streaming=True
+            )
+
+m.predict("hi")

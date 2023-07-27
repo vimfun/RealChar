@@ -44,7 +44,7 @@ function connectSocket() {
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
         // if user interrupts the previous response, should be able to play audios of new response
-        shouldPlayAudio=true;
+        shouldPlayAudio = true;
       }
     } else {  // binary data
       if (!shouldPlayAudio) {
@@ -60,13 +60,13 @@ function connectSocket() {
   socket.onerror = (error) => {
     console.log(`WebSocket Error: ${error}`);
   };
-  
+
   socket.onclose = (event) => {
     console.log("Socket closed");
   };
 }
 
-connectButton.addEventListener("click", function() {
+connectButton.addEventListener("click", function () {
   connectButton.style.display = "none";
   textContainer.textContent = "Select a character";
   devicesContainer.style.display = "none";
@@ -75,7 +75,7 @@ connectButton.addEventListener("click", function() {
   textButton.style.display = 'flex';
 });
 
-disconnectButton.addEventListener("click", function() {
+disconnectButton.addEventListener("click", function () {
   stopAudioPlayback();
   if (radioGroupsCreated) {
     destroyRadioGroups();
@@ -114,11 +114,11 @@ disconnectButton.addEventListener("click", function() {
  */
 const audioDeviceSelection = document.getElementById('audio-device-selection');
 
-window.addEventListener("load", function() {
+window.addEventListener("load", function () {
   navigator.mediaDevices.enumerateDevices()
-    .then(function(devices) {
+    .then(function (devices) {
       // Filter out the audio input devices
-      let audioInputDevices = devices.filter(function(device) {
+      let audioInputDevices = devices.filter(function (device) {
         return device.kind === 'audioinput';
       });
 
@@ -129,19 +129,19 @@ window.addEventListener("load", function() {
       }
 
       // Add the audio input devices to the dropdown
-      audioInputDevices.forEach(function(device, index) {
+      audioInputDevices.forEach(function (device, index) {
         let option = document.createElement('option');
         option.value = device.deviceId;
         option.textContent = device.label || `Microphone ${index + 1}`;
         audioDeviceSelection.appendChild(option);
       });
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.log('An error occurred: ' + err);
     });
 });
 
-audioDeviceSelection.addEventListener('change', function(e) {
+audioDeviceSelection.addEventListener('change', function (e) {
   connectMicrophone(e.target.value);
 });
 
@@ -160,34 +160,34 @@ let audioSent = false;
 function connectMicrophone(deviceId) {
   navigator.mediaDevices.getUserMedia({
     audio: {
-      deviceId: deviceId ? {exact: deviceId} : undefined,
+      deviceId: deviceId ? { exact: deviceId } : undefined,
       echoCancellation: true
     }
-  }).then(function(stream) {
+  }).then(function (stream) {
     mediaRecorder = new MediaRecorder(stream);
 
-    mediaRecorder.ondataavailable = function(e) {
+    mediaRecorder.ondataavailable = function (e) {
       chunks.push(e.data);
     }
 
-    mediaRecorder.onstart = function() {
+    mediaRecorder.onstart = function () {
       console.log("recorder starts");
     }
 
-    mediaRecorder.onstop = function(e) {
+    mediaRecorder.onstop = function (e) {
       console.log("recorder stops");
-      let blob = new Blob(chunks, {'type' : 'audio/webm'});
+      let blob = new Blob(chunks, { 'type': 'audio/webm' });
       chunks = [];
 
       if (debug) {
-          // Save the audio
-          let url = URL.createObjectURL(blob);
-          let a = document.createElement("a");
-          document.body.appendChild(a);
-          a.style = "display: none";
-          a.href = url;
-          a.download = 'test.webm';
-          a.click();
+        // Save the audio
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        a.href = url;
+        a.download = 'test.webm';
+        a.click();
       }
 
       if (socket && socket.readyState === WebSocket.OPEN) {
@@ -202,9 +202,9 @@ function connectMicrophone(deviceId) {
       }
     }
   })
-  .catch(function(err) {
-    console.log('An error occurred: ' + err);
-  });
+    .catch(function (err) {
+      console.log('An error occurred: ' + err);
+    });
 }
 
 
@@ -224,11 +224,11 @@ function speechRecognition() {
   recognition.maxAlternatives = 1;
   recognition.continuous = true;
 
-  recognition.onstart = function() {
+  recognition.onstart = function () {
     console.log("recognition starts");
   }
 
-  recognition.onresult = function(event) {
+  recognition.onresult = function (event) {
     // Clear the timeout if a result is received
     clearTimeout(onresultTimeout);
     clearTimeout(onspeechTimeout);
@@ -260,10 +260,10 @@ function speechRecognition() {
     }, 2000); // 2 seconds
   }
 
-  recognition.onspeechend = function() {
+  recognition.onspeechend = function () {
     console.log("speech ends");
 
-    if (socket && socket.readyState === WebSocket.OPEN){
+    if (socket && socket.readyState === WebSocket.OPEN) {
       audioSent = true;
       mediaRecorder.stop();
       if (confidence > 0.8 && finalTranscripts.length > 0) {
@@ -278,9 +278,9 @@ function speechRecognition() {
     finalTranscripts = [];
   };
 
-  recognition.onend = function() {
+  recognition.onend = function () {
     console.log("recognition ends");
-    if (socket && socket.readyState === WebSocket.OPEN && callActive){
+    if (socket && socket.readyState === WebSocket.OPEN && callActive) {
       recognition.start();
     }
   };
@@ -292,7 +292,7 @@ function speechRecognition() {
  */
 const talkButton = document.getElementById('talk-btn');
 const textButton = document.getElementById('text-btn');
-const callButton =  document.getElementById('call');
+const callButton = document.getElementById('call');
 const textContainer = document.querySelector('.header p');
 const playerContainer = document.getElementById('player-container');
 const soundWave = document.getElementById('sound-wave');
@@ -349,8 +349,8 @@ function showRecordingStatus() {
   }
 }
 
-talkButton.addEventListener("click", function() {
-  if (socket && socket.readyState === WebSocket.OPEN && mediaRecorder && selectedCharacter) {
+talkButton.addEventListener("click", function () {
+  if (socket && socket.readyState === WebSocket.OPEN && selectedCharacter) {
     playerContainer.style.display = "flex";
 
     talkButton.style.display = "none";
@@ -360,7 +360,7 @@ talkButton.addEventListener("click", function() {
     stopCallButton.style.display = "flex";
     soundWave.style.display = "flex";
     textContainer.textContent = "Hi, my friend, what brings you here today?";
-    shouldPlayAudio=true;
+    shouldPlayAudio = true;
 
     socket.send(selectedCharacter);
     hideOtherCharacters();
@@ -372,12 +372,12 @@ talkButton.addEventListener("click", function() {
   }
 });
 
-textButton.addEventListener("click", function() {
-  if (socket && socket.readyState === WebSocket.OPEN && mediaRecorder && selectedCharacter) {
+textButton.addEventListener("click", function () {
+  if (socket && socket.readyState === WebSocket.OPEN && selectedCharacter) {
     messageButton.click();
     disconnectButton.style.display = "flex";
     textContainer.textContent = "";
-    shouldPlayAudio=true;
+    shouldPlayAudio = true;
 
     socket.send(selectedCharacter);
     hideOtherCharacters();
@@ -406,7 +406,7 @@ const chatWindow = document.getElementById('chat-window');
 const recordingStatus = document.getElementById("recording");
 let characterSent = false;
 
-messageButton.addEventListener('click', function() {
+messageButton.addEventListener('click', function () {
   playerContainer.style.display = 'none';
   chatWindow.style.display = 'block';
   talkButton.style.display = 'none';
@@ -464,6 +464,7 @@ function createCharacterGroups(message) {
     'Elon Musk': '/static/elon.png',
     'Bruce Wayne': '/static/bruce.png',
     'Steve Jobs': '/static/jobs.png',
+    '子衿': '/static/zijin.jpeg',
   };
 
   const radioButtonDiv = document.getElementsByClassName('radio-buttons')[0];
@@ -558,8 +559,8 @@ let isPlaying = false;
 // Function to unlock the AudioContext
 function unlockAudioContext(audioContext) {
   if (audioContext.state === 'suspended') {
-    var unlock = function() {
-      audioContext.resume().then(function() {
+    var unlock = function () {
+      audioContext.resume().then(function () {
         document.body.removeEventListener('touchstart', unlock);
         document.body.removeEventListener('touchend', unlock);
       });

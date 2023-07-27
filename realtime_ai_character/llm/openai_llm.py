@@ -36,7 +36,8 @@ class OpenaiLlm(LLM):
             self.chat_open_ai = ChatOpenAI(
                 model=model,
                 temperature=0.5,
-                streaming=True
+                streaming=True,
+                openai_proxy='http://127.0.0.1:7890'
             )
         self.db = get_chroma()
 
@@ -57,6 +58,9 @@ class OpenaiLlm(LLM):
         # 3. Generate response
         response = await self.chat_open_ai.agenerate(
             [history], callbacks=[c for c in [callback, audioCallback, StreamingStdOutCallbackHandler()] if c is not None])
+        # response = self.chat_open_ai.generate(
+        #     [history],
+        #     callbacks=[c for c in [callback, audioCallback, StreamingStdOutCallbackHandler()] if c is not None])
         logger.info(f'Response: {response}')
         return response.generations[0][0].text
 
@@ -66,4 +70,5 @@ class OpenaiLlm(LLM):
         logger.info(f'Found {len(docs)} documents')
 
         context = '\n'.join([d.page_content for d in docs])
+        # logger.info('%s', context)
         return context

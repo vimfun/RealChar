@@ -14,12 +14,12 @@ langchain
 llama_index
 openai-whisper
 psycopg2-binary
-pyaudio
+# pyaudio
 pydantic
 pydub
 python-dotenv
 replicate
-simpleaudio
+# simpleaudio
 soundfile
 SpeechRecognition
 sqlalchemy
