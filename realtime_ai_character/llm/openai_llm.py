@@ -58,9 +58,6 @@ class OpenaiLlm(LLM):
         # 3. Generate response
         response = await self.chat_open_ai.agenerate(
             [history], callbacks=[c for c in [callback, audioCallback, StreamingStdOutCallbackHandler()] if c is not None])
-        # response = self.chat_open_ai.generate(
-        #     [history],
-        #     callbacks=[c for c in [callback, audioCallback, StreamingStdOutCallbackHandler()] if c is not None])
         logger.info(f'Response: {response}')
         return response.generations[0][0].text
 

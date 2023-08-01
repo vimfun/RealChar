@@ -169,7 +169,6 @@ class UserChat:
                     raise WebSocketDisconnect('disconnected')
 
 
-
 async def handle_receive(
         websocket: WebSocket,
         client_id: int,
@@ -344,3 +343,5 @@ async def handle_receive(
         logger.info("User #%s closed the connection", user_id)
         await manager.disconnect(websocket)
         return
+
+# %%
