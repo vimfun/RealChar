@@ -7,32 +7,29 @@ StreamingStdOutCallbackHandler.on_chat_model_start = lambda *args, **kwargs: Non
 
 
 class AsyncCallbackTextHandler(AsyncCallbackHandler):
-    def __init__(self, on_new_token=None, token_buffer=None, on_llm_end=None, *args, **kwargs):
+    def __init__(self, on_new_token=None, on_llm_end=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.on_new_token = on_new_token
-        self._on_llm_end = on_llm_end
-        self.token_buffer = token_buffer
+        self.on_llm_end = on_llm_end
 
     async def on_chat_model_start(self, *args, **kwargs):
         pass
 
     async def on_llm_new_token(self, token: str, *args, **kwargs):
-        if self.token_buffer is not None:
-            self.token_buffer.append(token)
-        await self.on_new_token(token)
+        if self.on_new_token is not None:
+            await self.on_new_token(token)
 
     async def on_llm_end(self, *args, **kwargs):
-        if self._on_llm_end is not None:
-            await self._on_llm_end(''.join(self.token_buffer))
-            self.token_buffer.clear()
+        if self.on_llm_end is not None:
+            await self.on_llm_end(args, kwargs)
 
 
 class AsyncCallbackAudioHandler(AsyncCallbackHandler):
     def __init__(self, text_to_speech=None, websocket=None, tts_event=None, character_name="", *args, **kwargs):
         super().__init__(*args, **kwargs)
         if text_to_speech is None:
-            def text_to_speech(token): return print(
-                f'New audio token: {token}')
+            def text_to_speech(token):
+                return print(f'New audio token: {token}')
         self.text_to_speech = text_to_speech
         self.websocket = websocket
         self.current_sentence = ""

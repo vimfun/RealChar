@@ -5,12 +5,15 @@ from langchain.schema import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from pydantic.dataclasses import dataclass
 from starlette.websockets import WebSocket, WebSocketState
 
+from .llm import base
+
 
 @dataclass
 class Character:
     name: str
     llm_system_prompt: str
     llm_user_prompt: str
+    llm: Type[base.LLM] = field(default=None)
 
 
 @dataclass

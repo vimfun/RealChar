@@ -9,7 +9,7 @@ let socket;
 let clientId = Math.floor(Math.random() * 10000000);
 
 function connectSocket() {
-  chatWindow.value = "";
+  chatMsgsWindow.value = "";
   var clientId = Math.floor(Math.random() * 1010000);
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
   var ws_path = ws_scheme + '://' + window.location.host + `/ws/${clientId}`;
@@ -27,21 +27,21 @@ function connectSocket() {
     if (typeof event.data === 'string') {
       const message = event.data;
       if (message == '[end]\n') {
-        chatWindow.value += "\n\n";
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatMsgsWindow.value += "\n\n";
+        chatMsgsWindow.scrollTop = chatMsgsWindow.scrollHeight;
       } else if (message.startsWith('[+]')) {
         // [+] indicates the transcription is done. stop playing audio
-        chatWindow.value += `\nYou> ${message}\n`;
+        chatMsgsWindow.value += `\nYou> ${message}\n`;
         stopAudioPlayback();
       } else if (message.startsWith('[=]')) {
         // [=] indicates the response is done
-        chatWindow.value += "\n\n";
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatMsgsWindow.value += "\n\n";
+        chatMsgsWindow.scrollTop = chatMsgsWindow.scrollHeight;
       } else if (message.startsWith('Select')) {
         createCharacterGroups(message);
       } else {
-        chatWindow.value += `${event.data}`;
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatMsgsWindow.value += `${event.data}`;
+        chatMsgsWindow.scrollTop = chatMsgsWindow.scrollHeight;
 
         // if user interrupts the previous response, should be able to play audios of new response
         shouldPlayAudio = true;
@@ -93,14 +93,14 @@ disconnectButton.addEventListener("click", function () {
   continueCallButton.style.display = "none";
   messageButton.style.display = "none";
   sendButton.style.display = "none";
-  messageInput.style.display = "none";
-  chatWindow.style.display = "none";
+  messageTextarea.style.display = "none";
+  chatMsgsWindow.style.display = "none";
   callButton.style.display = "none";
   connectButton.style.display = "flex";
   devicesContainer.style.display = "flex";
   talkButton.disabled = true;
   textButton.disabled = true;
-  chatWindow.value = "";
+  chatMsgsWindow.value = "";
   selectedCharacter = null;
   characterSent = false;
   callActive = false;
@@ -270,8 +270,8 @@ function speechRecognition() {
         console.log("send final transcript");
         let message = finalTranscripts.join(' ');
         socket.send(message);
-        chatWindow.value += `\nYou> ${message}\n`;
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatMsgsWindow.value += `\nYou> ${message}\n`;
+        chatMsgsWindow.scrollTop = chatMsgsWindow.scrollHeight;
         shouldPlayAudio = true;
       }
     }
@@ -302,9 +302,9 @@ let callActive = false;
 
 callButton.addEventListener("click", () => {
   playerContainer.style.display = 'flex';
-  chatWindow.style.display = 'none';
+  chatMsgsWindow.style.display = 'none';
   sendButton.style.display = 'none';
-  messageInput.style.display = "none";
+  messageTextarea.style.display = "none";
   callButton.style.display = "none";
   messageButton.style.display = 'flex';
 
@@ -408,11 +408,11 @@ let characterSent = false;
 
 messageButton.addEventListener('click', function () {
   playerContainer.style.display = 'none';
-  chatWindow.style.display = 'block';
+  chatMsgsWindow.style.display = 'block';
   talkButton.style.display = 'none';
   textButton.style.display = 'none';
   sendButton.style.display = 'block';
-  messageInput.style.display = "block";
+  messageTextarea.style.display = "block";
   callButton.style.display = "flex";
   messageButton.style.display = 'none';
   continueCallButton.style.display = 'none';
@@ -424,11 +424,11 @@ messageButton.addEventListener('click', function () {
 
 const sendMessage = () => {
   if (socket && socket.readyState === WebSocket.OPEN) {
-    const message = messageInput.value;
-    chatWindow.value += `\nYou> ${message}\n`;
-    chatWindow.scrollTop = chatWindow.scrollHeight;
+    const message = messageTextarea.value;
+    chatMsgsWindow.value += `\nYou> ${message}\n`;
+    chatMsgsWindow.scrollTop = chatMsgsWindow.scrollHeight;
     socket.send(message);
-    messageInput.value = "";
+    messageTextarea.value = "";
     if (isPlaying) {
       stopAudioPlayback();
     }
@@ -436,7 +436,7 @@ const sendMessage = () => {
 }
 
 sendButton.addEventListener("click", sendMessage);
-messageInput.addEventListener("keydown", (event) => {
+messageTextarea.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
     sendMessage();

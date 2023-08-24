@@ -37,7 +37,6 @@ class OpenaiLlm(LLM):
                 model=model,
                 temperature=0.5,
                 streaming=True,
-                openai_proxy='http://127.0.0.1:7890'
             )
         self.db = get_chroma()
 
@@ -52,8 +51,8 @@ class OpenaiLlm(LLM):
         context = self._generate_context(user_input, character)
 
         # 2. Add user input to history
-        history.append(HumanMessage(content=user_input_template.format(
-            context=context, query=user_input)))
+        human_msg = HumanMessage(content=user_input_template.format( context=context, query=user_input) if 'context' in user_input_template else user_input_template.format(query=user_input))
+        history.append(human_msg)
 
         # 3. Generate response
         response = await self.chat_open_ai.agenerate(
